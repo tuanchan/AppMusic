@@ -8,26 +8,26 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # 1. Checkout source
+      # 1) Checkout source
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Flutter
+      # 2) Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      # 3. Flutter pub get
+      # 3) Flutter pub get
       - name: Flutter pub get
         run: flutter pub get
 
-      # 4. 🔥 REGENERATE iOS RUNNER (quan trọng nhất)
+      # 4) Regenerate iOS platform files (tạo Runner.xcodeproj, v.v.)
       - name: Regenerate iOS platform files
         run: flutter create .
 
-      # 5. Install CocoaPods & pods
+      # 5) Install CocoaPods & pods
       - name: Install CocoaPods
         run: sudo gem install cocoapods
 
@@ -36,18 +36,40 @@ jobs:
           cd ios
           pod install --repo-update
 
-      # 6. Build iOS (NO CODESIGN)
-      - name: Build iOS (no codesign)
-        run: flutter build ios --release --no-codesign
-
-      # 7. Package IPA (unsigned)
-      - name: Package IPA
+      # 6) Build iOS (unsigned) using xcodebuild (NO signing / NO team)
+      - name: Build iOS (unsigned via xcodebuild)
         run: |
+          cd ios
+          xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
+
+      # 7) Package IPA (unsigned)
+      - name: Package IPA (unsigned)
+        run: |
+          APP_PATH="ios/build/Build/Products/Release-iphoneos/Runner.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "Runner.app not found at $APP_PATH"
+            echo "Listing build products:"
+            ls -la ios/build/Build/Products || true
+            exit 1
+          fi
+
+          rm -rf Payload app-unsigned.ipa
           mkdir -p Payload
-          cp -R build/ios/iphoneos/Runner.app Payload/
+          cp -R "$APP_PATH" Payload/
           zip -r app-unsigned.ipa Payload
 
-      # 8. Upload IPA artifact
+      # 8) Upload IPA artifact
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
