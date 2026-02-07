@@ -1,4 +1,4 @@
-name: Build iOS IPA (unsigned)
+name: Build iOS IPA (unsigned - device)
 
 on:
   workflow_dispatch:
@@ -31,25 +31,37 @@ jobs:
           cd ios
           pod install --repo-update
 
-      # ✅ Simulator chỉ build được debug trong môi trường này
-      - name: Build iOS (simulator, debug)
-        run: flutter build ios --simulator --debug
+      # ✅ Build for REAL DEVICE (iphoneos) but NO signing
+      - name: Build iOS (iphoneos, unsigned)
+        run: |
+          cd ios
+          xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
 
+      # (optional) show what got built
       - name: Debug build outputs
         run: |
-          echo "=== build/ios ==="
-          ls -la build/ios || true
-          echo "=== build/ios/iphonesimulator ==="
-          ls -la build/ios/iphonesimulator || true
+          echo "=== ios/build/Build/Products ==="
+          ls -la ios/build/Build/Products || true
+          echo "=== Release-iphoneos ==="
+          ls -la ios/build/Build/Products/Release-iphoneos || true
 
-      - name: Package IPA (unsigned)
+      - name: Package IPA (unsigned, device)
         run: |
-          APP_DIR="build/ios/iphonesimulator"
-          APP_PATH="$APP_DIR/Runner.app"
-
+          APP_PATH="ios/build/Build/Products/Release-iphoneos/Runner.app"
           if [ ! -d "$APP_PATH" ]; then
-            echo "Runner.app not found, listing $APP_DIR"
-            ls -la "$APP_DIR" || true
+            echo "Runner.app not found at $APP_PATH"
+            ls -la ios/build/Build/Products/Release-iphoneos || true
             exit 1
           fi
 
@@ -61,5 +73,5 @@ jobs:
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-unsigned-ipa
+          name: app-unsigned-ipa-device
           path: app-unsigned.ipa
