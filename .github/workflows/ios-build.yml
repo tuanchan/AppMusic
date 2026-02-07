@@ -23,7 +23,7 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      # 4) Regenerate iOS platform files (tạo Runner.xcodeproj, v.v.)
+      # 4) Regenerate iOS platform files (Runner.xcodeproj, v.v.)
       - name: Regenerate iOS platform files
         run: flutter create .
 
@@ -36,31 +36,18 @@ jobs:
           cd ios
           pod install --repo-update
 
-      # 6) Build iOS (unsigned) using xcodebuild (NO signing / NO team)
-      - name: Build iOS (unsigned via xcodebuild)
-        run: |
-          cd ios
-          xcodebuild \
-            -workspace Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -sdk iphoneos \
-            -destination "generic/platform=iOS" \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            DEVELOPMENT_TEAM="" \
-            PROVISIONING_PROFILE_SPECIFIER=""
+      # 6) ✅ Build iOS Simulator (NO signing required)
+      - name: Build iOS (simulator, release)
+        run: flutter build ios --release --simulator
 
-      # 7) Package IPA (unsigned)
+      # 7) Package IPA (unsigned, simulator)
       - name: Package IPA (unsigned)
         run: |
-          APP_PATH="ios/build/Build/Products/Release-iphoneos/Runner.app"
+          APP_PATH="build/ios/iphonesimulator/Runner.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "Runner.app not found at $APP_PATH"
-            echo "Listing build products:"
-            ls -la ios/build/Build/Products || true
+            echo "Listing build/ios:"
+            ls -la build/ios || true
             exit 1
           fi
 
