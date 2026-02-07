@@ -1,0 +1,48 @@
+name: appmusic
+description: A beautiful music player app with red and black neon theme
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Audio
+  just_audio: ^0.9.36
+  audio_service: ^0.18.12
+  audio_session: ^0.1.18
+  
+  # UI
+  audio_video_progress_bar: ^2.0.1
+  
+  # File handling
+  file_picker: ^6.1.1
+  path_provider: ^2.1.1
+  permission_handler: ^11.1.0
+  
+  # State management & Utils
+  rxdart: ^0.27.7
+  shared_preferences: ^2.2.2
+  
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/

@@ -1,0 +1,381 @@
+================================================================================
+MUSIC PLAYER APP - TẤT CẢ CÁC LỆNH CMD CẦN THIẾT
+Repository: https://github.com/tuanchan/AppMusic.git
+================================================================================
+
+📌 YÊU CẦU TRƯỚC KHI BẮT ĐẦU:
+  ✓ Git đã cài đặt
+  ✓ Flutter SDK đã cài đặt
+  ✓ Xcode (cho iOS) hoặc Android Studio (cho Android)
+
+================================================================================
+🚀 PHẦN 1: SETUP PROJECT TỪ ĐẦU
+================================================================================
+
+--- Bước 1: Clone Repository ---
+git clone https://github.com/tuanchan/AppMusic.git
+cd AppMusic
+
+--- Bước 2: Tạo Flutter Project Structure ---
+flutter create --org com.tuanchan --platforms ios,android .
+
+--- Bước 3: Cài Đặt Dependencies Chính ---
+flutter pub add just_audio
+flutter pub add audio_service
+flutter pub add file_picker
+flutter pub add path_provider
+flutter pub add permission_handler
+flutter pub add audio_video_progress_bar
+flutter pub add rxdart
+flutter pub add shared_preferences
+flutter pub add audio_session
+
+--- Bước 4: Cài Đặt Dev Dependencies ---
+flutter pub add flutter_launcher_icons --dev
+
+--- Bước 5: Get Dependencies ---
+flutter pub get
+
+--- Bước 6: Tạo Cấu Trúc Thư Mục ---
+mkdir lib\models
+mkdir lib\screens
+mkdir lib\services
+mkdir lib\utils
+mkdir assets\icons
+mkdir .github\workflows
+
+--- Bước 7: Copy Files Vào Đúng Vị Trí ---
+REM Copy các file từ package download vào:
+REM   lib\main.dart
+REM   lib\models\song.dart
+REM   lib\screens\home_screen.dart
+REM   lib\screens\player_screen.dart
+REM   lib\services\music_service.dart
+REM   lib\services\file_service.dart
+REM   lib\utils\app_theme.dart
+REM   pubspec.yaml (GHI ĐÈ file cũ!)
+REM   ios\Runner\Info.plist
+REM   .github\workflows\ios-build.yml
+REM   .gitignore
+REM   README.md
+
+--- Bước 8: Get Dependencies Lại Sau Khi Copy pubspec.yaml ---
+flutter pub get
+
+================================================================================
+🧪 PHẦN 2: TEST VÀ CHẠY APP
+================================================================================
+
+--- Xem Danh Sách Devices ---
+flutter devices
+
+--- Chạy App Trên Device/Emulator ---
+flutter run
+
+--- Chạy Ở Chế Độ Release ---
+flutter run --release
+
+--- Kiểm Tra Lỗi ---
+flutter analyze
+
+--- Clean Project ---
+flutter clean
+
+================================================================================
+📦 PHẦN 3: BUILD APP
+================================================================================
+
+--- Build Android APK (Release) ---
+flutter build apk --release
+REM Output: build\app\outputs\flutter-apk\app-release.apk
+
+--- Build Android App Bundle ---
+flutter build appbundle --release
+REM Output: build\app\outputs\bundle\release\app-release.aab
+
+--- Build iOS (Chỉ Trên macOS) ---
+flutter build ios --release
+REM Output: build\ios\iphoneos\Runner.app
+
+================================================================================
+🍎 PHẦN 4: BUILD IPA CHO iOS
+================================================================================
+
+--- Phương Án A: Qua GitHub Actions (TỰ ĐỘNG - KHUYẾN NGHỊ) ---
+
+Bước 1: Push Code Lên GitHub
+  git add .
+  git commit -m "Initial commit - Music Player App"
+  git push origin main
+
+Bước 2: Theo Dõi Build
+  - Vào: https://github.com/tuanchan/AppMusic/actions
+  - Chờ workflow "Build iOS IPA" hoàn thành (10-15 phút)
+  - Click vào workflow run
+  - Scroll xuống phần "Artifacts"
+  - Download file "AppMusic-iOS"
+
+Bước 3: Cài Đặt IPA
+  - Download AltStore: https://altstore.io/
+  - Hoặc Sideloadly: https://sideloadly.io/
+  - Kéo thả file IPA vào AltStore/Sideloadly
+  - Đăng nhập Apple ID (miễn phí)
+  - Cài đặt app
+
+
+--- Phương Án B: Build Local (Cần macOS + Xcode) ---
+
+Bước 1: Setup iOS Dependencies
+  cd ios
+  pod install
+  cd ..
+
+Bước 2: Build iOS
+  flutter build ios --release
+
+Bước 3: Tạo IPA Thủ Công
+  cd build\ios\iphoneos
+  mkdir Payload
+  xcopy /E /I Runner.app Payload\Runner.app
+  powershell Compress-Archive -Path Payload -DestinationPath AppMusic.zip
+  ren AppMusic.zip AppMusic.ipa
+
+Bước 4: IPA Ở Đây
+  build\ios\iphoneos\AppMusic.ipa
+
+================================================================================
+🔄 PHẦN 5: GIT COMMANDS
+================================================================================
+
+--- Init Git (Nếu Chưa Có) ---
+git init
+
+--- Add Remote Origin ---
+git remote add origin https://github.com/tuanchan/AppMusic.git
+
+--- Check Status ---
+git status
+
+--- Add All Files ---
+git add .
+
+--- Commit Changes ---
+git commit -m "Your commit message"
+
+--- Push To GitHub ---
+git push origin main
+
+--- Force Push (Nếu Cần) ---
+git push -f origin main
+
+--- Pull Latest Changes ---
+git pull origin main
+
+--- View Remotes ---
+git remote -v
+
+--- View Branches ---
+git branch -a
+
+--- Create New Branch ---
+git checkout -b new-branch-name
+
+--- Switch Branch ---
+git checkout branch-name
+
+--- Reset To Origin ---
+git fetch origin
+git reset --hard origin/main
+
+================================================================================
+🔧 PHẦN 6: TROUBLESHOOTING COMMANDS
+================================================================================
+
+--- Lỗi Dependencies ---
+flutter clean
+flutter pub get
+
+--- Lỗi Build iOS ---
+cd ios
+pod deintegrate
+pod install
+cd ..
+flutter clean
+flutter build ios
+
+--- Lỗi Build Android ---
+flutter clean
+cd android
+gradlew clean
+cd ..
+flutter build apk
+
+--- Update Flutter ---
+flutter upgrade
+
+--- Flutter Doctor (Kiểm Tra Cài Đặt) ---
+flutter doctor
+flutter doctor -v
+
+--- Xóa Cache ---
+flutter pub cache repair
+
+--- Fix Dependencies ---
+flutter pub upgrade
+
+--- Generate App Icons ---
+flutter pub run flutter_launcher_icons
+
+================================================================================
+📊 PHẦN 7: USEFUL COMMANDS
+================================================================================
+
+--- Xem Flutter Version ---
+flutter --version
+
+--- Xem Git Version ---
+git --version
+
+--- List All Packages ---
+flutter pub deps
+
+--- Outdated Packages ---
+flutter pub outdated
+
+--- Run Tests ---
+flutter test
+
+--- Format Code ---
+flutter format .
+
+--- Analyze Code ---
+flutter analyze
+
+--- Build Size Analysis ---
+flutter build apk --analyze-size
+
+--- Check Performance ---
+flutter run --profile
+
+================================================================================
+⚡ PHẦN 8: QUICK ONE-LINERS (COPY-PASTE NHANH)
+================================================================================
+
+--- Setup Hoàn Chỉnh (1 Dòng) ---
+git clone https://github.com/tuanchan/AppMusic.git && cd AppMusic && flutter create --org com.tuanchan --platforms ios,android . && flutter pub add just_audio audio_service file_picker path_provider permission_handler audio_video_progress_bar rxdart shared_preferences audio_session && flutter pub add flutter_launcher_icons --dev && flutter pub get
+
+--- Build Và Push Nhanh ---
+flutter clean && flutter pub get && flutter build apk --release && git add . && git commit -m "Build update" && git push origin main
+
+--- Clean Và Rebuild ---
+flutter clean && flutter pub get && flutter run
+
+================================================================================
+📝 PHẦN 9: PATHS QUAN TRỌNG
+================================================================================
+
+Project Root:
+  AppMusic\
+
+Source Code:
+  AppMusic\lib\
+  AppMusic\lib\main.dart
+  AppMusic\lib\models\song.dart
+  AppMusic\lib\screens\home_screen.dart
+  AppMusic\lib\screens\player_screen.dart
+  AppMusic\lib\services\music_service.dart
+  AppMusic\lib\services\file_service.dart
+  AppMusic\lib\utils\app_theme.dart
+
+Config Files:
+  AppMusic\pubspec.yaml
+  AppMusic\ios\Runner\Info.plist
+  AppMusic\android\app\src\main\AndroidManifest.xml
+  AppMusic\.github\workflows\ios-build.yml
+  AppMusic\.gitignore
+
+Build Outputs:
+  AppMusic\build\app\outputs\flutter-apk\app-release.apk
+  AppMusic\build\app\outputs\bundle\release\app-release.aab
+  AppMusic\build\ios\iphoneos\Runner.app
+  AppMusic\build\ios\iphoneos\AppMusic.ipa
+
+================================================================================
+🎯 PHẦN 10: WORKFLOW TỰ ĐỘNG
+================================================================================
+
+CÁCH SỬ DỤNG NHANH NHẤT:
+
+1. Chạy script tự động:
+   COMPLETE_SETUP.bat
+
+2. Script sẽ hỏi bạn muốn:
+   - Clone repository mới
+   - Setup trong folder hiện tại
+   
+3. Script sẽ tự động:
+   ✓ Clone repo (nếu chọn)
+   ✓ Tạo Flutter project
+   ✓ Cài tất cả dependencies
+   ✓ Tạo folders
+   ✓ Hướng dẫn copy files
+   ✓ Chạy pub get
+   ✓ Analyze code
+
+4. Sau đó chọn:
+   - Run app ngay
+   - Build APK
+   - Push lên GitHub
+   - Xem hướng dẫn build
+
+================================================================================
+📚 TÀI LIỆU THAM KHẢO
+================================================================================
+
+README.md            - Hướng dẫn tổng quan
+QUICK_START.md       - Quick reference commands
+BUILD_IPA_GUIDE.md   - Chi tiết build iOS/IPA
+IMPORT_GUIDE.md      - Import vào repo có sẵn
+PROJECT_SUMMARY.md   - Tổng quan project
+COMPLETE_SETUP.bat   - Script setup tự động
+ALL_COMMANDS.txt     - File này - tất cả commands
+
+Online Docs:
+  Flutter: https://docs.flutter.dev/
+  Git: https://git-scm.com/doc
+  GitHub Actions: https://docs.github.com/actions
+  AltStore: https://altstore.io/
+  Sideloadly: https://sideloadly.io/
+
+================================================================================
+✅ CHECKLIST SAU KHI SETUP
+================================================================================
+
+□ Flutter đã được cài đặt (flutter --version)
+□ Git đã được cài đặt (git --version)
+□ Repository đã được clone
+□ Dependencies đã được cài (flutter pub get)
+□ Cấu trúc folders đã được tạo
+□ Tất cả files đã được copy vào đúng vị trí
+□ pubspec.yaml đã được thay thế
+□ Info.plist đã có permissions
+□ GitHub Actions workflow đã có
+□ App chạy được trên device (flutter run)
+□ Code đã được push lên GitHub
+□ GitHub Actions workflow đã chạy thành công
+
+================================================================================
+🎵 KẾT THÚC - HAPPY CODING!
+================================================================================
+
+Developer: tuanchan
+Repository: https://github.com/tuanchan/AppMusic.git
+Version: 1.0.0
+
+Nếu gặp vấn đề, tham khảo:
+  - QUICK_START.md cho quick reference
+  - BUILD_IPA_GUIDE.md cho iOS/IPA chi tiết
+  - PROJECT_SUMMARY.md cho tổng quan
+  - hoặc tạo Issue trên GitHub
+
+Good luck! 🚀🎧
