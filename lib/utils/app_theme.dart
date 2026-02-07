@@ -1,3 +1,4 @@
+// utils/app_theme.dart
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -15,30 +16,36 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: black,
+
+      // Primary
       primaryColor: neonRed,
-      colorScheme: ColorScheme.dark(
+
+      // ✅ Material3-friendly color scheme (stable across Flutter versions)
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: neonRed,
+        brightness: Brightness.dark,
         primary: neonRed,
         secondary: darkRed,
         surface: darkGray,
-        background: black,
-        error: Colors.red.shade900,
+        error: const Color(0xFFB00020),
       ),
-      
+
       // AppBar
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: black,
         elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: neonRed),
         titleTextStyle: TextStyle(
           color: textWhite,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
+      ).copyWith(
+        iconTheme: const IconThemeData(color: neonRed),
       ),
-      
+
       // Card
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: darkGray,
         elevation: 4,
         shape: RoundedRectangleBorder(
@@ -46,19 +53,31 @@ class AppTheme {
           side: BorderSide(color: neonRed.withOpacity(0.3), width: 1),
         ),
       ),
-      
+
       // Icon
-      iconTheme: IconThemeData(color: neonRed),
-      
+      iconTheme: const IconThemeData(color: neonRed),
+
       // Text
-      textTheme: TextTheme(
-        displayLarge: TextStyle(color: textWhite, fontSize: 32, fontWeight: FontWeight.bold),
-        displayMedium: TextStyle(color: textWhite, fontSize: 24, fontWeight: FontWeight.bold),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          color: textWhite,
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+        ),
+        displayMedium: TextStyle(
+          color: textWhite,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
         bodyLarge: TextStyle(color: textWhite, fontSize: 16),
         bodyMedium: TextStyle(color: textGray, fontSize: 14),
-        labelLarge: TextStyle(color: neonRed, fontSize: 16, fontWeight: FontWeight.bold),
+        labelLarge: TextStyle(
+          color: neonRed,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
       ),
-      
+
       // Button
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -69,16 +88,16 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
       ),
-      
+
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           foregroundColor: neonRed,
         ),
       ),
-      
+
       // Slider
       sliderTheme: SliderThemeData(
         activeTrackColor: neonRed,
@@ -86,7 +105,7 @@ class AppTheme {
         thumbColor: neonRed,
         overlayColor: neonRed.withOpacity(0.2),
       ),
-      
+
       // Input
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -101,21 +120,23 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: neonRed, width: 2),
+          borderSide: const BorderSide(color: neonRed, width: 2),
         ),
-        labelStyle: TextStyle(color: textGray),
+        labelStyle: const TextStyle(color: textGray),
         hintStyle: TextStyle(color: textGray.withOpacity(0.5)),
       ),
     );
   }
 
   static BoxDecoration neonGlow({Color? color}) {
+    final Color glowColor = color ?? neonRed;
+
     return BoxDecoration(
-      color: color ?? neonRed.withOpacity(0.1),
+      color: (color ?? neonRed).withOpacity(0.1),
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
         BoxShadow(
-          color: (color ?? neonRed).withOpacity(0.5),
+          color: glowColor.withOpacity(0.5),
           blurRadius: 20,
           spreadRadius: 2,
         ),
