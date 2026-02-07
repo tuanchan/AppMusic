@@ -8,26 +8,21 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # 1) Checkout source
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2) Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      # 3) Flutter pub get
       - name: Flutter pub get
         run: flutter pub get
 
-      # 4) Regenerate iOS platform files (Runner.xcodeproj, v.v.)
       - name: Regenerate iOS platform files
         run: flutter create .
 
-      # 5) Install CocoaPods & pods
       - name: Install CocoaPods
         run: sudo gem install cocoapods
 
@@ -36,11 +31,10 @@ jobs:
           cd ios
           pod install --repo-update
 
-      # 6) ✅ Build iOS Simulator (NO signing required)
-      - name: Build iOS (simulator, release)
-        run: flutter build ios --release --simulator
+      # ✅ Simulator không hỗ trợ release -> dùng profile
+      - name: Build iOS (simulator, profile)
+        run: flutter build ios --profile --simulator
 
-      # 7) Package IPA (unsigned, simulator)
       - name: Package IPA (unsigned)
         run: |
           APP_PATH="build/ios/iphonesimulator/Runner.app"
@@ -56,7 +50,6 @@ jobs:
           cp -R "$APP_PATH" Payload/
           zip -r app-unsigned.ipa Payload
 
-      # 8) Upload IPA artifact
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
