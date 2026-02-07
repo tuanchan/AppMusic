@@ -1,54 +1,55 @@
-name: Build iOS IPA
+name: Build iOS IPA (unsigned)
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
-  build-ios:
+  build:
     runs-on: macos-latest
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      # 1. Checkout source
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.24.0'
-        channel: 'stable'
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
 
-    - name: Install dependencies
-      run: flutter pub get
+      # 3. Flutter pub get
+      - name: Flutter pub get
+        run: flutter pub get
 
-    - name: Run tests
-      run: flutter test --no-pub
-      continue-on-error: true
+      # 4. 🔥 REGENERATE iOS RUNNER (quan trọng nhất)
+      - name: Regenerate iOS platform files
+        run: flutter create .
 
-    - name: Build iOS (No Codesign)
-      run: |
-        flutter build ios --release --no-codesign
+      # 5. Install CocoaPods & pods
+      - name: Install CocoaPods
+        run: sudo gem install cocoapods
 
-    - name: Create IPA
-      run: |
-        cd build/ios/iphoneos
-        mkdir Payload
-        cp -r Runner.app Payload/
-        zip -r AppMusic.ipa Payload
+      - name: Pod install
+        run: |
+          cd ios
+          pod install --repo-update
 
-    - name: Upload IPA
-      uses: actions/upload-artifact@v4
-      with:
-        name: AppMusic-iOS
-        path: build/ios/iphoneos/AppMusic.ipa
-        retention-days: 30
+      # 6. Build iOS (NO CODESIGN)
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
 
-    - name: Upload Runner.app
-      uses: actions/upload-artifact@v4
-      with:
-        name: Runner-app
-        path: build/ios/iphoneos/Runner.app
-        retention-days: 30
+      # 7. Package IPA (unsigned)
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -r app-unsigned.ipa Payload
+
+      # 8. Upload IPA artifact
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-unsigned-ipa
+          path: app-unsigned.ipa
