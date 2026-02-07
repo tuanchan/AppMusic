@@ -31,23 +31,31 @@ jobs:
           cd ios
           pod install --repo-update
 
-      # ✅ Simulator không hỗ trợ release -> dùng profile
-      - name: Build iOS (simulator, profile)
-        run: flutter build ios --profile --simulator
+      # ✅ Simulator chỉ build được debug trong môi trường này
+      - name: Build iOS (simulator, debug)
+        run: flutter build ios --simulator --debug
+
+      - name: Debug build outputs
+        run: |
+          echo "=== build/ios ==="
+          ls -la build/ios || true
+          echo "=== build/ios/iphonesimulator ==="
+          ls -la build/ios/iphonesimulator || true
 
       - name: Package IPA (unsigned)
         run: |
-          APP_PATH="build/ios/iphonesimulator/Runner.app"
+          APP_DIR="build/ios/iphonesimulator"
+          APP_PATH="$APP_DIR/Runner.app"
+
           if [ ! -d "$APP_PATH" ]; then
-            echo "Runner.app not found at $APP_PATH"
-            echo "Listing build/ios:"
-            ls -la build/ios || true
+            echo "Runner.app not found, listing $APP_DIR"
+            ls -la "$APP_DIR" || true
             exit 1
           fi
 
           rm -rf Payload app-unsigned.ipa
           mkdir -p Payload
-          cp -R "$APP_PATH" Payload/
+          cp -R "$APP_PATH" Payload/Runner.app
           zip -r app-unsigned.ipa Payload
 
       - name: Upload IPA artifact
